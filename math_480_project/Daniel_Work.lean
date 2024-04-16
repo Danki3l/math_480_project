@@ -1,4 +1,11 @@
 import Mathlib.Topology.Basic
-#check TopologicalSpace
+import Mathlib.Tactic
 
-#eval 2
+example: {n : ℤ | 12∣ n} ⊆ {n : ℤ | 3∣n} := by
+  intro x
+  intro h
+  simp
+  simp at h
+  rcases h with ⟨k, hk⟩
+  use 4*k
+  linarith
