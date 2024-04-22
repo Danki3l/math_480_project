@@ -1,5 +1,9 @@
 import Mathlib.Topology.Basic
 import Mathlib.Tactic
+import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Data.Nat.GCD.Basic
+open BigOperators
+open Finset
 
 
 example: {n : ℤ | 12∣ n} ⊆ {n : ℤ | 3∣n} := by
@@ -16,3 +20,5 @@ def PA := A.powerset
 #eval PA
 #check (Finset.range 10)
 #eval Finset.range 10
+
+example: ∀A ⊆ {1, 2, 3, 4, 5}, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by sorry
