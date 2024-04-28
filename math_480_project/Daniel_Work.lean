@@ -51,6 +51,7 @@ example: ¬ Injective g := by sorry
 -- 1. Understanding how to make a function from integers to integers, specifically f(x) = x^2
 -- 2. Undestanding how to make finite sets s = {1, -2, 2} and t = {1, 4}
 -- 3. How to show that ∀x ∈ s, f(x) ∈ t
+-- 4. How to show that the cardinality of s is less than the cardinality of t
 
 -- 1:
 variable (f : ℤ → ℤ)
