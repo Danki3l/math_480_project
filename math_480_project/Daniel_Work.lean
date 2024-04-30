@@ -61,3 +61,14 @@ variable (f : ℤ → ℤ)
 -- 2:
 def s : Finset ℤ  := {1, -2, 2}
 def t: Finset ℤ := {1, 4}
+
+-- 3: Showing that ∀x ∈ s, f(x) ∈ t
+example: ∀ x ∈ s, g (x) ∈ t := by
+simp [s, t, g]
+
+-- Minimum working example to figure out what's going on above
+example: ({1, 2}: Finset ℤ)  ⊆ {1, 2, 3} := by
+simp
+
+-- 4: Showing that the cardinality of s is less than the cardinality of t
+example: card s < card t := by sorry
