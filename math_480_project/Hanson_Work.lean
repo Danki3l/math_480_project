@@ -88,3 +88,5 @@ simp
 -- 4: Showing that the cardinality of t is less than the cardinality of s
 example: card t < card s := by
 simp [s, t, card, g]
+
+-- decide

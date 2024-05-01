@@ -71,6 +71,8 @@ simp
 example: t.card < s.card := by
 decide
 
+-- #check Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+
 --Proving that g(x) = x^2 is not injective using the pigeonhole principle:
-example: ∃ x, y ∈ s ∧ x ≠ y ∧ g x = g y := by
+example: ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ g x = g y := by
 apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to
