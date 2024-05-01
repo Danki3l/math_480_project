@@ -1,6 +1,7 @@
 import Mathlib.Topology.Basic
 import Mathlib.Tactic
 import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Nat.GCD.Basic
 open BigOperators
 open Finset
@@ -46,7 +47,19 @@ simp [g] at h
 -- rw[g, g] at h
 
 --Prove the same result using the pigeonhole principle:
-example: ¬ Injective g := by sorry
+def S : Finset ℤ := {-2, -1, 0, 1, 2}
+def T: Finset ℤ := {0, 1, 4}
+
+lemma maps_to_g : ∀ x ∈ S, g x ∈ T := by
+  intro x hx
+  fin_cases x
+  simp [g]
+
+example: ¬ Injective g := by
+  apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+  show Finset.card S > Finset.card T
+  simp [g, S, T, card]
+  exact maps_to_g
 
 
 -- Components to Understand
@@ -64,31 +77,14 @@ def f (x : ℤ) : ℤ := x^2
 def s : Finset ℤ  := {1, -2, 2}
 def t: Finset ℤ := {1, 4}
 
--- 3:
-example: ∀x ∈ s, f x ∈ t := by
-  intro x
-  intro hx
-  cases hx;
-  simp [f];
-  apply Finset.mem_insert_of_mem;
-  apply Finset.mem_singleton_self
+-- 3: Showing that ∀x ∈ s, f(x) ∈ t
+example: ∀ x ∈ s, g (x) ∈ t := by
+simp [s, t, g]
 
--- 4:
-def B : Finset ℕ := {1,2,3,4}
-def A : Finset ℕ := {1,2,3}
+-- Minimum working example to figure out what's going on above
+example: ({1, 2}: Finset ℤ)  ⊆ {1, 2, 3} := by
+simp
 
-example: card A < card B := by
-  apply Finset.card_lt_card
-  split
-  { show A ⊆ B, from by
-    intros a ha
-    simp at ha
-    cases ha; simp [ha]; apply Finset.mem_insert_of_mem; apply Finset.mem_insert_of_mem; apply Finset.mem_insert_of_mem; apply Finset.mem_singleton_self }
-  { show ∃x ∈ B, x ∉ A, by
-    use 4
-    split
-    { apply Finset.mem_insert_self }
-    { intro contra
-      have h : 4 ∈ {1, 2, 3} := by assumption
-      simp at h }
-  }
+-- 4: Showing that the cardinality of t is less than the cardinality of s
+example: card t < card s := by
+simp [s, t, card, g]
