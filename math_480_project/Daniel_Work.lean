@@ -43,15 +43,12 @@ specialize @h 1 (-1)
 simp [g] at h
 -- rw[g, g] at h
 
---Prove the same result using the pigeonhole principle:
-example: ¬ Injective g := by sorry
-
 
 -- Components to Understand
 -- 1. Understanding how to make a function from integers to integers, specifically f(x) = x^2
 -- 2. Undestanding how to make finite sets s = {1, -2, 2} and t = {1, 4}
 -- 3. How to show that ∀x ∈ s, f(x) ∈ t
--- 4. How to show that the cardinality of s is less than the cardinality of t
+-- 4. How to show that the cardinality of t is less than the cardinality of s
 
 -- 1:
 variable (f : ℤ → ℤ)
@@ -70,5 +67,10 @@ simp [s, t, g]
 example: ({1, 2}: Finset ℤ)  ⊆ {1, 2, 3} := by
 simp
 
--- 4: Showing that the cardinality of s is less than the cardinality of t
-example: card s < card t := by sorry
+-- 4: Showing that the cardinality of t is less than the cardinality of s
+example: t.card < s.card := by
+decide
+
+--Proving that g(x) = x^2 is not injective using the pigeonhole principle:
+example: ∃ x, y ∈ s ∧ x ≠ y ∧ g x = g y := by
+apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to
