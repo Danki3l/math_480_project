@@ -83,6 +83,7 @@ simp [s, t, g]
 -- Adjust the range here to go from 1 to 100
 def range_1_to_100 := Finset.range 101 \ Finset.range 1
 example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by sorry
+
 -- 1. Understanding how to make a function that maps a finite set of size 10 and is a subset of A to its sum
 def sum_of_subset (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : ℕ :=
   ∑ x in B, x
@@ -104,6 +105,19 @@ example (A : Finset ℕ) (h : A ⊆ Finset.range 1001) : A.card ≤ 1001 :=
 -- 6. How to make t' of type finset
 variable (A : Finset ℕ)
 def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
+#check t'
 -- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
+
+variable {α : Type*}
+variable (s : set α)
+variable [finite s]
+variable [decidable_eq α]
+variable [finite s]
+
+def set_to_finset {α : Type*} [decidable_eq α] (s : set α) [finite s] : finset α :=
+⟨s.to_list, s.to_list_nodup⟩
+
+example : theorem_about_finset (set_to_finset s) :=
+
 
 -- 8. Understanding how to apply pigeonhole principle to show that there exists X, Y ⊆ A such that X ≠ Y and ∑ x in X, x = ∑ y in Y, y
