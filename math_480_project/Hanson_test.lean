@@ -96,12 +96,9 @@ example (A : Finset ℕ) : A.powerset.card = 2^(A.card) := by
 set_option maxRecDepth 10000
 example (A : Finset ℕ) (h : A ⊆ Finset.range 1001) : A.card ≤ 1001 :=
   Finset.card_le_card h
--- 6. How to make t of type finset
-def t_new : Finset ℕ := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
--- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
--- 8. Understanding how to apply pigeonhole principle to show that there exists X, Y ⊆ A such that X ≠ Y and ∑ x in X, x = ∑ y in Y, y
-
-
+-- 6. How to make t' of type finset
 variable (A : Finset ℕ)
 def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
--- variable (h : Set.card t' < 10)
+-- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
+
+-- 8. Understanding how to apply pigeonhole principle to show that there exists X, Y ⊆ A such that X ≠ Y and ∑ x in X, x = ∑ y in Y, y
