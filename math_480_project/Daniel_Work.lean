@@ -44,7 +44,7 @@ simp [g] at h
 -- rw[g, g] at h
 
 
--- Components to Understand
+-- Components to Understand for smaller g(x) = x^2 example
 -- 1. Understanding how to make a function from integers to integers, specifically f(x) = x^2
 -- 2. Undestanding how to make finite sets s = {1, -2, 2} and t = {1, 4}
 -- 3. How to show that ∀x ∈ s, f(x) ∈ t
@@ -55,6 +55,7 @@ variable (f : ℤ → ℤ)
 #check g (-1)
 #eval g (-2)
 
+#check Finset.mk
 -- 2:
 def s : Finset ℤ  := {1, -2, 2}
 def t: Finset ℤ := {1, 4}
@@ -68,11 +69,25 @@ example: ({1, 2}: Finset ℤ)  ⊆ {1, 2, 3} := by
 simp
 
 -- 4: Showing that the cardinality of t is less than the cardinality of s
-example: t.card < s.card := by
+lemma t_lt_s: t.card < s.card := by
 decide
 
 -- #check Finset.exists_ne_map_eq_of_card_lt_of_maps_to
 
 --Proving that g(x) = x^2 is not injective using the pigeonhole principle:
 example: ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ g x = g y := by
-apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to t_lt_s
+simp [s, t, g]
+
+-- Components to understand for Prop 3.19
+-- 1. Understanding how to make a function that maps a finite set of size 10 and is a subset of A to its sum
+-- 2. Understanding how to show that one finite set is a subset of another i.e. X ⊆ A, Y ⊆ A
+-- 3. Understanding how to argue that the "sum" of the finite sets is lower and upper bounded i.e. it can't be less than 0 and more than 1000
+-- 4. Understanding how to apply number of subsets theorem
+-- 5. Understanding how to argue that the cardinality of t is less than or equal to 1001
+-- 6. How to make t of type finset
+-- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
+
+variable (A : Finset ℕ)
+def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
+-- variable (h : Set.card t' < 10)
