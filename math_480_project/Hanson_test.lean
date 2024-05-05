@@ -97,9 +97,14 @@ example (A : Finset ℕ) : A.powerset.card = 2^(A.card) := by
   exact Finset.card_powerset A
 -- 5. Understanding how to argue that the cardinality of t is less than or equal to 1001
 example (A : Finset ℕ) : A.card ≤ 1001 := by
-  exact Finset.card_le_of_subset (Finset.range 1001) (Finset.subset_range 1001)
+  exact Finset.card_le_card (Finset.range 1001) (Finset.subset_range 1001)
+
+set_option maxRecDepth 10000
+example (A : Finset ℕ) (h : A ⊆ Finset.range 1001) : A.card ≤ 1001 :=
+  Finset.card_le_card h
+
 -- 6. How to make t of type finset
-def t : Finset ℕ := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
+def t_new : Finset ℕ := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
 -- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
 
 -- 8. Understanding how to apply pigeonhole principle to show that there exists X, Y ⊆ A such that X ≠ Y and ∑ x in X, x = ∑ y in Y, y
