@@ -87,8 +87,10 @@ def sum_of_subset (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : ℕ :=
 example (X Y A : Finset ℕ) (hX : X ⊆ A) (hY : Y ⊆ A) : true := by
   trivial
 -- 3. Understanding how to argue that the "sum" of the finite sets is lower and upper bounded i.e. it can't be less than 0 and more than 1000
-example (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : 0 ≤ ∑ x in B, x ∧ ∑ x in B, x ≤ 1000 := by
-  exact Finset.sum_nonneg B
+example (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : 0 ≤ sum_of_subset A B h ∧ sum_of_subset A B h ≤ 1000 := by
+  split
+  apply Finset.sum_nonneg
+  apply Finset.sum_le_card_mul_max
 -- 4. Understanding how to apply number of subsets theorem
 example (A : Finset ℕ) : A.powerset.card = 2^(A.card) := by
   exact Finset.card_powerset A
