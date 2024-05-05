@@ -80,6 +80,9 @@ apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to t_lt_s
 simp [s, t, g]
 
 -- Components to understand for Prop 3.19
+-- Adjust the range here to go from 1 to 100
+def range_1_to_100 := Finset.range 101 \ Finset.range 1
+example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by sorry
 -- 1. Understanding how to make a function that maps a finite set of size 10 and is a subset of A to its sum
 def sum_of_subset (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : ℕ :=
   ∑ x in B, x
