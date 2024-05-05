@@ -90,3 +90,54 @@ example: card t < card s := by
 simp [s, t, card, g]
 
 -- decide
+
+
+
+
+theorem my_theorem (A : finset nat) (hA : A ⊆ range 100) (hCard : card A = 10) :
+  ∃ (X Y : finset nat), X ≤ A ∧ Y ≤ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y :=
+by
+  {
+    obtain [f, hf] : finset.exists_ne_map_eq_of_card_lt_of_maps_to (finset.range 100) A 10 $ λ a, a :=
+    {
+      intro a,
+      cases (hA a) with ha nh,
+      { contradiction },
+      { exact ha },
+    },
+    {
+      refine exists.intro _ _,
+      { exact finset.image f A },
+      { exact finset.preimage (λ x, x ∈ A) f (finset.range 100) },
+      {
+        intros x hx,
+        cases (hf x) with byA nbyA,
+        { exact byA },
+        { contradiction }
+      },
+      {
+        rw [finset.sum_image_eq hf],
+        exact finset.sum_const _ _ (card A)
+      },
+      {
+        rw [finset.sum_preimage_eq hf],
+        rw [finset.card_range],
+        exact nat.sum_const _ _ 100
+      },
+      {
+        intro hxy,
+        rw [finset.ext'] at hxy,
+        cases hxy with hx hy,
+        {
+          cases (hf hx) with byA nbyA,
+          { exact byA },
+          { contradiction }
+        },
+        {
+          cases (mem_preimage _ _ f (finset.range 100)) hy with hyA nhyA,
+          { exact nhyA },
+          { contradiction }
+        }
+      }
+    }
+  }
