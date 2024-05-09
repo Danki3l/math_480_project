@@ -91,3 +91,19 @@ simp [s, t, g]
 variable (A : Finset ℕ)
 def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
 -- variable (h : Set.card t' < 10)
+
+-- Updated Prop 3.19 with correct range
+def range_1_to_100 := Finset.range 101 \ Finset.range 1
+#eval range_1_to_100
+example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by sorry
+
+-- Smaller Example
+example: ∃ X ∈ Finset.range 100, ∃ Y ∈ Finset.range 100, X ≠ Y ∧ X/2 = Y/2 := by
+apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to (t := Finset.range 50)
+. decide
+intro c ch
+rw[mem_range]
+rw[mem_range] at ch
+rw[Nat.div_lt_iff_lt_mul]
+exact ch
+norm_num
