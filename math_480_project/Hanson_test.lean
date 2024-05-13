@@ -91,6 +91,7 @@ def sum_of_subset (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : ℕ :=
 example (X Y A : Finset ℕ) (hX : X ⊆ A) (hY : Y ⊆ A) : true := by
   trivial
 -- 3. Understanding how to argue that the "sum" of the finite sets is lower and upper bounded i.e. it can't be less than 0 and more than 1000
+-- 3.1. make A and B subsets of range_1_to_100
 example (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : 0 ≤ sum_of_subset A B h ∧ sum_of_subset A B h ≤ 1000 := by
   split
   apply Finset.sum_nonneg
