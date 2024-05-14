@@ -94,8 +94,18 @@ def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
 
 -- Updated Prop 3.19 with correct range
 def range_1_to_100 := Finset.range 101 \ Finset.range 1
-#eval range_1_to_100
-example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by sorry
+example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by
+  intros A hA hcardA
+  have h : A.card = 10 := hcardA
+  -- Creating summing function that takes in a subset of A and sums its elements
+  let powersetA := powerset A
+  let sums := powersetA.image (fun s => ∑ x in s, x)
+  have h_powersetA : powersetA.card = 2 ^ A.card := Finset.card_powerset A
+  have h_card_powersetA : (2 : ℕ) ^ A.card = 1024 := by simp [h]
+  have ineq : 10 * 100 < 1024 := by norm_num
+  -- Showing that the cardinality of the set of all the sums is less than the cardinality of the power set of A
+  have h_sums : sums.card < powersetA.card := by
+    rw [h_powersetA, h_card_powersetA]
 
 -- Smaller Example
 example: ∃ X ∈ Finset.range 100, ∃ Y ∈ Finset.range 100, X ≠ Y ∧ X/2 = Y/2 := by
@@ -107,3 +117,14 @@ rw[mem_range] at ch
 rw[Nat.div_lt_iff_lt_mul]
 exact ch
 norm_num
+
+-- Another Smaller Example
+example (s : Finset ℕ) (h : ∀ x ∈ s, x < 100) : s.card <= 100 := by
+  have : 100 = Finset.card (Finset.range 100) := rfl
+  rw [this]
+  apply Finset.card_mono
+  -- rw [Finset.le_iff_subset]
+  intro x xins
+  rw [mem_range]
+  apply h x
+  exact xins
