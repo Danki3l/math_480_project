@@ -92,6 +92,17 @@ variable (A : Finset ℕ)
 def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
 -- variable (h : Set.card t' < 10)
 
+-- Useful Lemma
+lemma sums_card_bdd  (s : Finset ℕ) (h : ∀ x ∈ s, x < n) : s.card <= n := by
+  have : n = Finset.card (Finset.range n) := by simp
+  rw [this]
+  apply Finset.card_mono
+  intro x xins
+  rw [mem_range]
+  apply h x
+  exact xins
+
+
 -- Updated Prop 3.19 with correct range
 def range_1_to_100 := Finset.range 101 \ Finset.range 1
 example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by
@@ -106,6 +117,19 @@ example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ 
   -- Showing that the cardinality of the set of all the sums is less than the cardinality of the power set of A
   have h_sums : sums.card < powersetA.card := by
     rw [h_powersetA, h_card_powersetA]
+  -- Showing that the cardinality of the set of all the sums is upper bounded
+    have sums.card.bdd : sums.card <= 1001 := by
+     apply sums_card_bdd
+     intro subsetsum subsetsumh
+     simp [sums] at subsetsumh
+     rcases subsetsumh with ⟨a, subseta, suma⟩
+     rw[← suma]
+
+
+
+
+
+
 
 -- Smaller Example
 example: ∃ X ∈ Finset.range 100, ∃ Y ∈ Finset.range 100, X ≠ Y ∧ X/2 = Y/2 := by
@@ -117,14 +141,3 @@ rw[mem_range] at ch
 rw[Nat.div_lt_iff_lt_mul]
 exact ch
 norm_num
-
--- Another Smaller Example
-example (s : Finset ℕ) (h : ∀ x ∈ s, x < 100) : s.card <= 100 := by
-  have : 100 = Finset.card (Finset.range 100) := rfl
-  rw [this]
-  apply Finset.card_mono
-  -- rw [Finset.le_iff_subset]
-  intro x xins
-  rw [mem_range]
-  apply h x
-  exact xins
