@@ -88,8 +88,8 @@ simp [s, t, g]
 -- 6. How to make t of type finset
 -- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
 
-variable (A : Finset ℕ)
-def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
+-- variable (A : Finset ℕ)
+-- def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
 -- variable (h : Set.card t' < 10)
 
 -- Useful Lemma
@@ -101,6 +101,11 @@ lemma sums_card_bdd  (s : Finset ℕ) (h : ∀ x ∈ s, x < n) : s.card <= n := 
   rw [mem_range]
   apply h x
   exact xins
+
+lemma sums_bdd (s: Finset ℕ) (cards: s.card = 10) (selem: ∀x ∈ s, x ≤ 100) :  ∑ x in s, x ≤ 1000 := by
+  have : ∑ x in s, x ≤ s.card * 100 := by
+    apply Finset.sum_le_card_nsmul s (fun x ↦ x) 100 selem
+  linarith
 
 
 -- Updated Prop 3.19 with correct range
@@ -119,11 +124,16 @@ example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ 
     rw [h_powersetA, h_card_powersetA]
   -- Showing that the cardinality of the set of all the sums is upper bounded
     have sums.card.bdd : sums.card <= 1001 := by
-     apply sums_card_bdd
-     intro subsetsum subsetsumh
-     simp [sums] at subsetsumh
-     rcases subsetsumh with ⟨a, subseta, suma⟩
-     rw[← suma]
+      apply sums_card_bdd
+      intro subsetsum subsetsumh
+      simp [sums] at subsetsumh
+      rcases subsetsumh with ⟨a, subseta, suma⟩
+      rw[← suma]
+      have : ∑ x in a, x ≤ 1000 := by
+        apply sums_bdd
+        sorry
+      linarith
+
 
 
 
