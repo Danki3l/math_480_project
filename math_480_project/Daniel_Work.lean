@@ -102,7 +102,7 @@ lemma sums_card_bdd  (s : Finset ℕ) (h : ∀ x ∈ s, x < n) : s.card <= n := 
   apply h x
   exact xins
 
-lemma sums_bdd (s: Finset ℕ) (cards: s.card = 10) (selem: ∀x ∈ s, x ≤ 100) :  ∑ x in s, x ≤ 1000 := by
+lemma sums_bdd (s: Finset ℕ) (cards: s.card ≤  10) (selem: ∀x ∈ s, x ≤ 100) :  ∑ x in s, x ≤ 1000 := by
   have : ∑ x in s, x ≤ s.card * 100 := by
     apply Finset.sum_le_card_nsmul s (fun x ↦ x) 100 selem
   linarith
@@ -131,7 +131,10 @@ example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ 
       rw[← suma]
       have : ∑ x in a, x ≤ 1000 := by
         apply sums_bdd
-        sorry
+        rw[← hcardA]
+        apply Finset.card_mono
+        simp[subseta]
+
       linarith
 
 
