@@ -133,7 +133,14 @@ example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ 
         apply sums_bdd
         rw[← hcardA]
         apply Finset.card_mono
-        simp[subseta]
+        simp
+        exact decidableExistsOfDecidableSubsets.proof_3 a subseta
+        intro x hx
+        have: x ∈ A := by
+         rw[mem_powerset] at subseta
+         exact subseta hx
+        have: x ∈ range_1_to_100 := by sorry
+        rw[mem_range] at this
 
       linarith
 
@@ -154,3 +161,6 @@ rw[mem_range] at ch
 rw[Nat.div_lt_iff_lt_mul]
 exact ch
 norm_num
+
+def a : Finset ℤ := {1,2,3}
+example (h: t ⊆ a): ∀x ∈ t, x ≤ 3 := by sorry
