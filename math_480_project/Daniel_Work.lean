@@ -110,7 +110,7 @@ lemma sums_bdd (s: Finset ℕ) (cards: s.card ≤  10) (selem: ∀x ∈ s, x ≤
 
 -- Updated Prop 3.19 with correct range
 def range_1_to_100 := Finset.range 101 \ Finset.range 1
-example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by
+example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X⊆ A, ∃Y ⊆ A, X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by
   intros A hA hcardA
   have h : A.card = 10 := hcardA
   -- Creating summing function that takes in a subset of A and sums its elements
@@ -118,32 +118,40 @@ example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ 
   let sums := powersetA.image (fun s => ∑ x in s, x)
   have h_powersetA : powersetA.card = 2 ^ A.card := Finset.card_powerset A
   have h_card_powersetA : (2 : ℕ) ^ A.card = 1024 := by simp [h]
-  have ineq : 10 * 100 < 1024 := by norm_num
-  -- Showing that the cardinality of the set of all the sums is less than the cardinality of the power set of A
-  have h_sums : sums.card < powersetA.card := by sorry
-  -- rw [h_powersetA, h_card_powersetA]
   -- Showing that the cardinality of the set of all the sums is upper bounded
   have sum_card_bdd : sums.card <= 1001 := by
-      apply sums_card_bdd
-      intro subsetsum subsetsumh
-      simp [sums] at subsetsumh
-      rcases subsetsumh with ⟨a, subseta, suma⟩
-      rw[← suma]
-      have : ∑ x in a, x ≤ 1000 := by
-        apply sums_bdd
-        rw[← hcardA]
-        apply Finset.card_mono
-        simp
-        exact decidableExistsOfDecidableSubsets.proof_3 a subseta
-        intro x hx
-        have: x ∈ A := by
-         rw[mem_powerset] at subseta
-         exact subseta hx
-        have: x ∈ range_1_to_100 := by sorry
-        rw[mem_range] at this
-
+    apply sums_card_bdd
+    intro subsetsum subsetsumh
+    simp [sums] at subsetsumh
+    rcases subsetsumh with ⟨a, subseta, suma⟩
+    rw[← suma]
+    have : ∑ x in a, x ≤ 1000 := by
+      apply sums_bdd
+      rw[← hcardA]
+      apply Finset.card_mono
+      simp
+      exact decidableExistsOfDecidableSubsets.proof_3 a subseta
+      intro x hx
+      have: x ∈ A := by
+        rw[mem_powerset] at subseta
+        exact subseta hx
+      have: x ∈ range_1_to_100 := by
+        exact hA this
+      simp[range_1_to_100] at this
       linarith
-
+    linarith
+    -- Showing that the cardinality of the set of all the sums is less than the cardinality of the power set of A
+  have h_sums : sums.card < powersetA.card := by
+    rw [h_powersetA, h_card_powersetA]
+    linarith
+  have: ∀a ∈ powersetA, (fun s => ∑ x in s, x) a ∈ sums := by
+    simp[sums, powersetA]
+    intro a2 a2h
+    use a2
+  have:  ∃ x ∈ powersetA, ∃ y ∈ powersetA, x ≠ y ∧ (fun s => ∑ x in s, x) x = (fun s => ∑ x in s, x) y := by
+    apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to h_sums this
+  simp[powersetA] at this
+  exact this
 
 
 
