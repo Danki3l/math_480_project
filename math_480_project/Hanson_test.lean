@@ -80,45 +80,95 @@ apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to t_lt_s
 simp [s, t, g]
 
 -- Components to understand for Prop 3.19
--- Adjust the range here to go from 1 to 100
-def range_1_to_100 := Finset.range 101 \ Finset.range 1
-example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by sorry
-
 -- 1. Understanding how to make a function that maps a finite set of size 10 and is a subset of A to its sum
-def sum_of_subset (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : ℕ :=
-  ∑ x in B, x
 -- 2. Understanding how to show that one finite set is a subset of another i.e. X ⊆ A, Y ⊆ A
-example (X Y A : Finset ℕ) (hX : X ⊆ A) (hY : Y ⊆ A) : true := by
-  trivial
 -- 3. Understanding how to argue that the "sum" of the finite sets is lower and upper bounded i.e. it can't be less than 0 and more than 1000
--- 3.1. make A and B subsets of range_1_to_100
-example (A : Finset ℕ) (B : Finset ℕ) (h : B ⊆ A) : 0 ≤ sum_of_subset A B h ∧ sum_of_subset A B h ≤ 1000 := by
-  split
-  apply Finset.sum_nonneg
-  apply Finset.sum_le_card_mul_max
 -- 4. Understanding how to apply number of subsets theorem
-example (A : Finset ℕ) : A.powerset.card = 2^(A.card) := by
-  exact Finset.card_powerset A
 -- 5. Understanding how to argue that the cardinality of t is less than or equal to 1001
-set_option maxRecDepth 10000
-example (A : Finset ℕ) (h : A ⊆ Finset.range 1001) : A.card ≤ 1001 :=
-  Finset.card_le_card h
--- 6. How to make t' of type finset
-variable (A : Finset ℕ)
-def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
-#check t'
+-- 6. How to make t of type finset
 -- 7. Find alternative version of pigeonhole principle that doesn't require both s and t to be finite sets
 
-variable {α : Type*}
-variable (s : set α)
-variable [finite s]
-variable [decidable_eq α]
-variable [finite s]
+-- variable (A : Finset ℕ)
+-- def t' := {σ | ∃ B ⊆ A, ∑ x in B, x = σ}
+-- variable (h : Set.card t' < 10)
 
-def set_to_finset {α : Type*} [decidable_eq α] (s : set α) [finite s] : finset α :=
-⟨s.to_list, s.to_list_nodup⟩
+-- Useful Lemma
+lemma sums_card_bdd  (s : Finset ℕ) (h : ∀ x ∈ s, x < n) : s.card <= n := by
+  have : n = Finset.card (Finset.range n) := by simp
+  rw [this]
+  apply Finset.card_mono
+  intro x xins
+  rw [mem_range]
+  apply h x
+  exact xins
 
-example : theorem_about_finset (set_to_finset s) :=
+lemma sums_bdd (s: Finset ℕ) (cards: s.card ≤  10) (selem: ∀x ∈ s, x ≤ 100) :  ∑ x in s, x ≤ 1000 := by
+  have : ∑ x in s, x ≤ s.card * 100 := by
+    apply Finset.sum_le_card_nsmul s (fun x ↦ x) 100 selem
+  linarith
 
 
--- 8. Understanding how to apply pigeonhole principle to show that there exists X, Y ⊆ A such that X ≠ Y and ∑ x in X, x = ∑ y in Y, y
+-- Updated Prop 3.19 with correct range
+def range_1_to_100 := Finset.range 101 \ Finset.range 1
+example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ ∑ x in X, x = ∑ y in Y, y := by
+  intros A hA hcardA
+  have h : A.card = 10 := hcardA
+  -- Creating summing function that takes in a subset of A and sums its elements
+  let powersetA := powerset A
+  let sums := powersetA.image (fun s => ∑ x in s, x)
+  have h_powersetA : powersetA.card = 2 ^ A.card := Finset.card_powerset A
+  have h_card_powersetA : (2 : ℕ) ^ A.card = 1024 := by simp [h]
+  have ineq : 10 * 100 < 1024 := by norm_num
+  -- Showing that the cardinality of the set of all the sums is less than the cardinality of the power set of A
+  have h_sums : sums.card < powersetA.card := by
+    rw [h_powersetA, h_card_powersetA]
+  -- Showing that the cardinality of the set of all the sums is upper bounded
+    have sums.card.bdd : sums.card <= 1001 := by
+      apply sums_card_bdd
+      intro subsetsum subsetsumh
+      simp [sums] at subsetsumh
+      rcases subsetsumh with ⟨a, subseta, suma⟩
+      rw[← suma]
+      have : ∑ x in a, x ≤ 1000 := by
+        apply sums_bdd
+        rw[← hcardA]
+        apply Finset.card_mono
+        simp
+        exact decidableExistsOfDecidableSubsets.proof_3 a subseta
+        intro x hx
+        have: x ∈ A := by
+         rw[mem_powerset] at subseta
+         exact subseta hx
+        have: x ∈ range_1_to_100 := by
+          exact hA this
+      linarith
+    have h_inj : ¬ ∀ X Y, X ∈ powersetA → Y ∈ powersetA → ∑ x in X, x = ∑ x in Y, y = ∑ x in Y, x → X = Y := by
+      intro h
+      apply lt_irrefl (1024 : ℕ)
+      sorry
+
+
+  -- Applying the pigeonhole principle
+
+
+
+
+
+
+
+
+
+
+-- Smaller Example
+example: ∃ X ∈ Finset.range 100, ∃ Y ∈ Finset.range 100, X ≠ Y ∧ X/2 = Y/2 := by
+apply Finset.exists_ne_map_eq_of_card_lt_of_maps_to (t := Finset.range 50)
+. decide
+intro c ch
+rw[mem_range]
+rw[mem_range] at ch
+rw[Nat.div_lt_iff_lt_mul]
+exact ch
+norm_num
+
+def a : Finset ℤ := {1,2,3}
+example (h: t ⊆ a): ∀x ∈ t, x ≤ 3 := by sorry
