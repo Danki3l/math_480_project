@@ -120,10 +120,10 @@ example: ∀A ⊆ range_1_to_100, card A = 10 → ∃ X,Y ⊆ A ∧ X ≠ Y ∧ 
   have h_card_powersetA : (2 : ℕ) ^ A.card = 1024 := by simp [h]
   have ineq : 10 * 100 < 1024 := by norm_num
   -- Showing that the cardinality of the set of all the sums is less than the cardinality of the power set of A
-  have h_sums : sums.card < powersetA.card := by
-    rw [h_powersetA, h_card_powersetA]
+  have h_sums : sums.card < powersetA.card := by sorry
+  -- rw [h_powersetA, h_card_powersetA]
   -- Showing that the cardinality of the set of all the sums is upper bounded
-    have sums.card.bdd : sums.card <= 1001 := by
+  have sum_card_bdd : sums.card <= 1001 := by
       apply sums_card_bdd
       intro subsetsum subsetsumh
       simp [sums] at subsetsumh
